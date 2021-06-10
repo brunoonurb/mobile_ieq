@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   View,
+  Alert,
 } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
@@ -19,6 +20,7 @@ import Input from "../../../../components/Input";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
+import { Button } from "../../../../components/Button";
 
 export function Login() {
 
@@ -50,6 +52,25 @@ export function Login() {
     navagation.navigate('UserIdentification')
   }
 
+  async function onSubmit(dados: any) {
+    console.log(dados);
+    
+    try{
+      Alert.alert('Login sucesso')
+      // await AsyncStorage.setItem('@plantmanager:user', name);
+      // navagation.navigate("Confirmation",{
+      //   title:'Prontinho',
+      //   subtitle: `Agora vamos começar a cuidar das suas ${"\n"}
+      //   plantinhas com muito cuidado.`,
+      //   buttonTitle: 'Começar',
+      //   icon:'smile',
+      //   nextScreen: 'PlantSelect'
+      // });
+    }catch{
+      Alert.alert('Não foi possivel salvar o seu nome. 😥')
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.wrapper}>
@@ -67,38 +88,22 @@ export function Login() {
             error={errors.email}
             control={control}
             name="email"
-            // backgroundColor="#000"
-            // color="#fff"
-            fontSize={24}
             icon="plus"
           />
           
           <Input
-            label="Email"
+            label="Senha"
             placeholder="Digite sua senha"
             returnKeyType="next"
-            keyboardType="email-address"
-            error={errors.email}
+            keyboardType="default"
+            error={errors.password}
             control={control}
-            name="senha"
+            name="password"
             type="password"
-            fontSize={24}
-            icon="plus"
           />
 
-
-        <Image source={wateringImg} style={styles.image} resizeMode="contain" />
-        <Text style={styles.subtitle}>
-          Não esqueça mais de regar suas plantas. Nós cuidamos de lembrar você
-          sempre que precisar.
-        </Text>
-        <TouchableOpacity 
-        style={styles.button} 
-        activeOpacity={0.7}
-        onPress={handleStart}
-        >
-          <Feather name="chevron-right" style={styles.buttonIcon} />
-        </TouchableOpacity>
+          <Button title="Confirmar" onPress={handleSubmit(onSubmit)} />
+      
       </View>
     </SafeAreaView>
   );

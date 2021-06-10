@@ -1,3 +1,4 @@
+import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Controller, FieldError } from "react-hook-form";
 import {
@@ -16,8 +17,6 @@ import * as Animatable from "react-native-animatable";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { color } from "react-native-reanimated";
 import colors from "../../styles/colors";
-// import Icon from "react-native-vector-icons/FontAwesome";
-// import { Input } from "react-native-elements";
 
 interface Props {
   error?: FieldError;
@@ -45,11 +44,11 @@ const InputCuston: React.FC<Props> = ({
   name,
   type,
   label,
-  fontSize = 16,
+  fontSize = 20,
   placeholder,
   backgroundColor,
-  borderRadius = 10,
-  color = "#000",
+  borderRadius = 7,
+  color,
   control,
   error,
   textoAjuda,
@@ -64,18 +63,20 @@ const InputCuston: React.FC<Props> = ({
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const sizeFont = fontSize ? fontSize : 16;
   const stylesLabel = {
-    fontSize: sizeFont,
+    fontSize: sizeFont + 1,
   };
 
   const stylesInput = {
-    color: color,
+    color: color ? color : colors.text,
     fontSize: sizeFont,
   };
   const stylesIcon = {
-    color: color,
+    color: color ? color : colors.text,
+    fontSize: sizeFont,
   };
 
   const stylesBaseInput = {
@@ -90,13 +91,13 @@ const InputCuston: React.FC<Props> = ({
     width: "100%",
     marginVertical: 5,
   };
-  const [isFocused, setIsFocused] = useState(false);
-  const [isFilled, setIsFilled] = useState(false);
-  // const [name, setName] = useState<string>();
+
+  function handlePassword() {
+    setShowPassword(!showPassword);
+  }
 
   function handleInputBlur() {
     setIsFocused(false);
-    // setIsFilled(!!name);
   }
 
   function handleInputFocus() {
@@ -113,7 +114,7 @@ const InputCuston: React.FC<Props> = ({
         style={[styles.baseInput, stylesBaseInput, styleEfect]}
       >
         <View>
-          <Text>{label}</Text>
+          <Text style={[styles.label, stylesLabel]}>{label}</Text>
         </View>
         <View>
           <View style={styles.iconInput}>
@@ -123,45 +124,41 @@ const InputCuston: React.FC<Props> = ({
                 <TextInput
                   style={[
                     styles.input,
+                    stylesInput,
                     isFocused && { borderColor: colors.primaryColor },
                   ]}
-                  onBlur={onBlur}
-                  // onBlur={handleInputBlur}
+                  // onBlur={onBlur}
+                  onBlur={handleInputBlur}
                   onChangeText={(value) => onChange(value)}
                   value={value}
                   placeholder={placeholder}
                   keyboardType={keyboardType}
                   returnKeyType={returnKeyType}
                   onFocus={handleInputFocus}
+                  {...props}
                 />
-
-                
               )}
               name={name}
               rules={{ required: true }}
               defaultValue={defaultValue}
             />
-             <View style={styles.icon}>
-             {type === "password" && (
-                      <TouchableWithoutFeedback
-                        onPress={() => setShowPassword(!showPassword)}
-                      >
-                        {/* <Icon
-                          name={showPassword ? "eye" : "eye-slash"}
-                          size={sizeFont}
-                          style={[styles.icon, stylesIcon]}
-                        /> */}
-                        <Text style={{fontSize:24}}>{showPassword ? "#" : "*"}</Text>
-                      </TouchableWithoutFeedback>
-                    )
-                  }
-               
-             </View>
+            <View>
+              {type === "password" && (
+                <TouchableWithoutFeedback
+                  containerStyle={styles.icon}
+                  onPress={() => handlePassword()}
+                >
+                  <Feather
+                    name={showPassword ? "eye" : "eye-off"}
+                    style={[stylesIcon]}
+                  />
+                </TouchableWithoutFeedback>
+              )}
+            </View>
           </View>
-         
         </View>
         <View>
-          <Text>{"tstando eoror"}</Text>
+          <Text style={styles.error}>{error?.message}</Text>
         </View>
       </Animatable.View>
     </KeyboardAvoidingView>
@@ -178,31 +175,24 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginHorizontal: 10,
   },
-  viewInput: {
-    flex: 10,
-    alignContent: "flex-start",
-  },
-  viewIcon: {
-    flex: 1,
-    alignContent: "flex-end",
-  },
   label: {
     marginLeft: 10,
+    color: colors.textHeading,
     fontWeight: "bold",
   },
   error: {
-    marginLeft: 10,
-    color: "red",
+    alignItems: "center",
+    paddingBottom: 3,
+    marginLeft: 18,
+    color: colors.errorColor,
+    fontSize: 12,
   },
-
   icon: {
     opacity: 0.8,
     width: 35,
     height: 35,
-    backgroundColor: "#400",
-    right:50,
-    top:25,
-    alignItems:"center",
+    right: 55,
+    alignItems: "center",
     position: "relative",
   },
   iconPass: {
@@ -211,15 +201,15 @@ const styles = StyleSheet.create({
   input: {
     paddingVertical: 6,
     borderBottomWidth: 1,
-    borderColor: colors.textHeading,
+    borderColor: colors.text,
     color: colors.text,
     width: "90%",
     fontSize: 18,
-    marginVertical: 20,
     marginHorizontal: "5%",
-    padding: 5,
+    paddingHorizontal: 5,
+    paddingBottom: 0,
   },
-  iconInput:{
+  iconInput: {
     flexDirection: "row",
-  }
+  },
 });

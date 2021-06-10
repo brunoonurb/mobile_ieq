@@ -6,7 +6,7 @@ export default {
   textDark:'#000000',
   background: '#E5E5E5',
   text:'#A0A0A0',
-  errorColo:'#FF0707',
+  errorColor:'#FF0707',
   textHeading:'#737070',
 
   green: '#32B768',
