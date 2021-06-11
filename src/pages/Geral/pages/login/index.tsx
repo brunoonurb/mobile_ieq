@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Text,
@@ -7,35 +7,27 @@ import {
   TouchableOpacity,
   Dimensions,
   View,
-  Alert,
 } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
 
-import wateringImg from "../../../../assets/splash_ieq.png";
+import logo from "../../../../assets/splash_ieq.png";
 import colors from "../../../../styles/colors";
 import fonts from "../../../../styles/fonts";
 import { useNavigation } from "@react-navigation/core";
 import Input from "../../../../components/Input";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from 'yup';
 import { Button } from "../../../../components/Button";
+import { validationSchema } from "./validate";
+import { alertError, alertSucess } from "../../../../services/util/alert";
+import { LoginInterface } from "../../interface/loginInterface";
+import { useLogin } from "../../hooks/useLogin";
+import { ScrollView } from "react-native-gesture-handler";
 
 export function Login() {
-
   const navagation = useNavigation();
-
-  const validationSchema = yup.object().shape({
-    email: yup
-      .string()
-      .email("Digite um e-mail válido")
-      .required("Preencha o campo de e-mail"),
-    password: yup
-      .string()
-      .min(6, "A senha deve ter no mínimo 6 caracteres")
-      .required("Preencha o campo de senha"),
-  });
+  const { error, loading, loginUser } = useLogin();
 
   const {
     register,
@@ -48,63 +40,72 @@ export function Login() {
     resolver: yupResolver(validationSchema),
   });
 
-  function handleStart(){
-    navagation.navigate('UserIdentification')
+  useEffect(() => {
+    if (error === null) return;
+    if (!error.statusError) return handleStart();
+    if (error.statusError) return alertError("Não foi possivel Logar!");
+  }, [error]);
+
+  function handleStart() {
+    alertSucess("Logim realizado com socesoo :)!");
+    // navagation.navigate('UserIdentification')
   }
 
-  async function onSubmit(dados: any) {
-    console.log(dados);
-    
-    try{
-      Alert.alert('Login sucesso')
-      // await AsyncStorage.setItem('@plantmanager:user', name);
-      // navagation.navigate("Confirmation",{
-      //   title:'Prontinho',
-      //   subtitle: `Agora vamos começar a cuidar das suas ${"\n"}
-      //   plantinhas com muito cuidado.`,
-      //   buttonTitle: 'Começar',
-      //   icon:'smile',
-      //   nextScreen: 'PlantSelect'
-      // });
-    }catch{
-      Alert.alert('Não foi possivel salvar o seu nome. 😥')
-    }
+  function handleRegister() {
+    // navagation.navigate('UserIdentification')
+  }
+
+  function handleForgotPassword() {}
+
+  async function onSubmit(dados: LoginInterface) {
+    loginUser(dados);
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.wrapper}>
-        <Text style={styles.title}>
-          Gerencie {"\n"}
-          suas plantas de
-          {"\n"} forma fácil
-        </Text>
+      <ScrollView>
+        <View style={styles.wrapper}>
+          <Image source={logo} style={styles.image} />
+          <View style={styles.form}>
+            <Input
+              label="Email"
+              placeholder="Digite seu nome"
+              returnKeyType="next"
+              keyboardType="email-address"
+              error={errors.email}
+              control={control}
+              name="email"
+              icon="plus"
+            />
 
-        <Input
-            label="Email"
-            placeholder="Digite seu nome"
-            returnKeyType="next"
-            keyboardType="email-address"
-            error={errors.email}
-            control={control}
-            name="email"
-            icon="plus"
+            <Input
+              label="Senha"
+              placeholder="Digite sua senha"
+              returnKeyType="next"
+              keyboardType="visible-password"
+              error={errors.password}
+              control={control}
+              name="password"
+              type="password"
+              marginTop={"10%"}
+            />
+            <TouchableOpacity
+              style={styles.forgotPassword}
+              onPress={handleForgotPassword}
+            >
+              <Text style={[styles.textForgotPassword]}>Esqueceu a senha?</Text>
+            </TouchableOpacity>
+          </View>
+          <Button
+            title="Confirmar"
+            loading={loading}
+            onPress={handleSubmit(onSubmit)}
           />
-          
-          <Input
-            label="Senha"
-            placeholder="Digite sua senha"
-            returnKeyType="next"
-            keyboardType="default"
-            error={errors.password}
-            control={control}
-            name="password"
-            type="password"
-          />
-
-          <Button title="Confirmar" onPress={handleSubmit(onSubmit)} />
-      
-      </View>
+        </View>
+        <TouchableOpacity style={styles.register} onPress={handleRegister}>
+          <Text style={[styles.textRegister]}>Criar nova Conta</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -114,29 +115,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   wrapper: {
-    flex:1,
+    flex: 1,
     alignItems: "center",
-    justifyContent: "space-around",
-    paddingHorizontal: 20
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: colors.heading,
-    marginTop: 38,
-    fontFamily: fonts.heading,
-    lineHeight: 34,
-  },
-  subtitle: {
-    textAlign: "center",
-    fontSize: 18,
+    justifyContent: "space-between",
     paddingHorizontal: 20,
-    color: colors.heading,
-    fontFamily: fonts.text,
+  },
+  form: {
+    marginVertical: "10%",
   },
   image: {
-    height: Dimensions.get("window").height * 0.5,
+    height: Dimensions.get("window").height / 4,
+    marginTop: "10%",
+    // marginBottom: "12%"
   },
   button: {
     backgroundColor: colors.green,
@@ -147,8 +137,30 @@ const styles = StyleSheet.create({
     height: 56,
     width: 56,
   },
-  buttonIcon: {
-    fontSize: 32,
-    color: colors.white,
+  register: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  textRegister: {
+    fontSize: 20,
+    color: colors.text,
+    fontFamily: fonts.complemet,
+    marginTop: 40,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.text,
+  },
+  forgotPassword: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignContent: "center",
+    marginLeft: 25,
+  },
+  textForgotPassword: {
+    fontSize: 14,
+    color: colors.text,
+    fontFamily: fonts.complemet,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.text,
   },
 });

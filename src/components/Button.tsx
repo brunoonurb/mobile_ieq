@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,15 +11,22 @@ import fonts from "../styles/fonts";
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
+  loading?:boolean;
 }
-export function Button({ title, ...rest }: ButtonProps) {
+export function Button({ title, loading, ...rest }: ButtonProps) {
   return (
     <TouchableOpacity 
     style={styles.contanier} 
     activeOpacity={0.7} 
     {...rest}
     >
+     {loading &&
+      <ActivityIndicator size="large" color={colors.textLight} />
+     }
+     {!loading &&
       <Text style={styles.text}> {title} </Text>
+     }
+      
     </TouchableOpacity>
   );
 }
@@ -26,14 +34,16 @@ export function Button({ title, ...rest }: ButtonProps) {
 const styles = StyleSheet.create({
   contanier: {
     backgroundColor: colors.green,
-    height: 56,
+    height: 60,
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
+    width: "80%",
+    marginHorizontal:'15%'
   },
   text: {
     fontSize: 24,
-    color: colors.white,
+    color: colors.textLight,
     fontFamily: fonts.heading,
   },
 });

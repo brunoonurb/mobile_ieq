@@ -38,6 +38,10 @@ interface Props {
   required?: boolean;
   returnKeyType?: ReturnKeyTypeOptions;
   keyboardType?: KeyboardTypeOptions;
+  marginLeft?: number | string;
+  marginRight?: number | string;
+  marginTop?: number | string;
+  marginBottom?: number | string;
 }
 
 const InputCuston: React.FC<Props> = ({
@@ -60,6 +64,10 @@ const InputCuston: React.FC<Props> = ({
   required,
   keyboardType = "default",
   returnKeyType = "default",
+  marginLeft = 5,
+  marginRight = 5,
+  marginTop = 5,
+  marginBottom = 5,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -89,7 +97,10 @@ const InputCuston: React.FC<Props> = ({
 
   const stylesContanier = {
     width: "100%",
-    marginVertical: 5,
+    marginLeft : marginLeft,
+    marginRight : marginRight,
+    marginTop : marginTop,
+    marginBottom : marginBottom,
   };
 
   function handlePassword() {
@@ -131,6 +142,7 @@ const InputCuston: React.FC<Props> = ({
                   onBlur={handleInputBlur}
                   onChangeText={(value) => onChange(value)}
                   value={value}
+                  secureTextEntry={showPassword}
                   placeholder={placeholder}
                   keyboardType={keyboardType}
                   returnKeyType={returnKeyType}
@@ -191,9 +203,9 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     width: 35,
     height: 35,
-    right: 55,
+    right: 20,
     alignItems: "center",
-    position: "relative",
+    position: "absolute",
   },
   iconPass: {
     opacity: 0.7,
