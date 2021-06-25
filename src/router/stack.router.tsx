@@ -10,6 +10,8 @@ import colors from "../styles/colors";
 import { PlantSave } from "../pages/PlantSave";
 import { MyPlants } from "../pages/MyPlants";
 import { Login } from "../pages/Geral/pages/login";
+import AuthRoutes from "./tab.routes";
+import { Userr } from "../pages/Usuario/pages/formulario";
 
 const stackRouter = createStackNavigator();
 
@@ -26,9 +28,7 @@ const AppRouter: React.FC = () => (
       name="login"
       component={Login}
     />
-
-    <stackRouter.Screen name="Welcome" component={Welcome} />
-
+    
     <stackRouter.Screen
       name="UserIdentification"
       component={UserIdentification}
@@ -38,9 +38,9 @@ const AppRouter: React.FC = () => (
 
     <stackRouter.Screen name="PlantSelect" component={PlantSelect} />
 
-    <stackRouter.Screen name="PlantSave" component={PlantSave} />
+    <stackRouter.Screen name="user" component={Userr} />
 
-    <stackRouter.Screen name="MyPlants" component={MyPlants} />
+    <stackRouter.Screen name="home" component={AuthRoutes} />
   </stackRouter.Navigator>
 );
 

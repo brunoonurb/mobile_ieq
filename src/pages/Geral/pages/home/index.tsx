@@ -25,8 +25,9 @@ import { LoginInterface } from "../../interface";
 import { useLogin } from "../../hooks/useLogin";
 import { ScrollView } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
+import { Header } from "../../../../components/Header";
 
-export function Login() {
+export function Home() {
   const navagation = useNavigation();
   const { error, loading, loginUser } = useLogin();
 
@@ -49,11 +50,11 @@ export function Login() {
 
   function handleStart() {
     // alertSucess("Logim realizado com socesoo :)!");
-    navagation.navigate("home");
+    navagation.navigate("MyPlants");
   }
 
   function handleRegister() {
-    navagation.navigate('user')
+    // navagation.navigate('UserIdentification')
   }
 
   function handleForgotPassword() {}
@@ -68,38 +69,13 @@ export function Login() {
   
   return (
     <SafeAreaView style={styles.container}>
+        
+      <Header/>
       <ScrollView>
         <View style={styles.wrapper}>
           <Image source={logo} style={styles.image} />
           <View style={styles.form}>
-            <Input
-              label="E-mail"
-              placeholder="Digite seu e-mail"
-              returnKeyType="next"
-              keyboardType="email-address"
-              error={errors.email}
-              control={control}
-              name="email"
-              onSubmitEditing={ () => handleNextImput('password')}
-            />
-
-            <Input
-              label="Senha"
-              placeholder="Digite sua senha"
-              returnKeyType="send"
-              keyboardType="visible-password"
-              error={errors.password}
-              control={control}
-              name="password"
-              type="password"
-              onSubmitEditing={handleSubmit(onSubmit)}
-            />
-            <TouchableOpacity
-              style={styles.forgotPassword}
-              onPress={handleForgotPassword}
-            >
-              <Text style={[styles.textForgotPassword]}>Esqueceu a senha?</Text>
-            </TouchableOpacity>
+           
           </View>
           <Button
             title="Confirmar"

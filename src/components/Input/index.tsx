@@ -5,12 +5,14 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   KeyboardTypeOptions,
+  NativeSyntheticEvent,
   Platform,
   ReturnKeyType,
   ReturnKeyTypeOptions,
   StyleSheet,
   Text,
   TextInput,
+  TextInputSubmitEditingEventData,
   View,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
@@ -42,6 +44,7 @@ interface Props {
   marginRight?: number | string;
   marginTop?: number | string;
   marginBottom?: number | string;
+  onSubmitEditing?: ((e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void) | undefined;
 }
 
 const InputCuston: React.FC<Props> = ({
@@ -51,7 +54,7 @@ const InputCuston: React.FC<Props> = ({
   fontSize = 20,
   placeholder,
   backgroundColor,
-  borderRadius = 7,
+  borderRadius = 10,
   color,
   control,
   error,
@@ -66,8 +69,9 @@ const InputCuston: React.FC<Props> = ({
   returnKeyType = "default",
   marginLeft = 5,
   marginRight = 5,
-  marginTop = 5,
-  marginBottom = 5,
+  marginTop = 8,
+  marginBottom = 8,
+  onSubmitEditing,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -91,8 +95,8 @@ const InputCuston: React.FC<Props> = ({
     backgroundColor: backgroundColor ? backgroundColor : colors.secondaryColor,
     color: color ? color : colors.text,
     borderRadius: borderRadius,
-    borderWidth: 0.2,
-    borderColor: "#000",
+    borderWidth: 0.4,
+    borderColor: colors.text,
   };
 
   const stylesContanier = {
@@ -147,6 +151,7 @@ const InputCuston: React.FC<Props> = ({
                   keyboardType={keyboardType}
                   returnKeyType={returnKeyType}
                   onFocus={handleInputFocus}
+                  onSubmitEditing={onSubmitEditing}
                   {...props}
                 />
               )}
@@ -186,6 +191,7 @@ const styles = StyleSheet.create({
   baseInput: {
     flexDirection: "column",
     marginHorizontal: 10,
+    shadowColor: "#000",
   },
   label: {
     marginLeft: 10,

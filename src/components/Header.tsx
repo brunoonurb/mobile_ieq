@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Feather } from "@expo/vector-icons";
 
 import userImg from '../assets/bruno.png'
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
+import { DrawerActions, useNavigation } from "@react-navigation/native";
 
 export function Header() {
 const [userName, setUserName] = useState<string>()
-
+const navagation = useNavigation();
   useEffect(()=>{
     async function loadStorageuserName() {
      
@@ -21,15 +23,21 @@ const [userName, setUserName] = useState<string>()
     
   },[userName])
 
+  function opemDraw(){
+    navagation.dispatch(DrawerActions.openDrawer());
+  }
+
   return (
     <View style={styles.contanier}>
       <View>
-        <Text style={styles.greeting}>Olá</Text>
         <Text style={styles.userName}>
-          {userName}
+          {/* {userName} */}
+          Bruno da Silva Pedroso
         </Text>
       </View>
-      <Image source={userImg} style={styles.image}/>
+      <TouchableOpacity onPress={opemDraw} >
+          <Feather name="menu" style={styles.buttonIcon} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -40,19 +48,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 20,
     marginTop: getStatusBarHeight(),
   },
-  image:{
-    width: 70,
-    height:70,
-    borderRadius: 40,
-  }, 
-  greeting:{
-    fontSize:32,
-    color: colors.heading,
-    fontFamily: fonts.text,
-  }, 
+  buttonIcon: {
+    marginHorizontal:8,
+    fontSize: 32,
+    color: colors.textHeading,
+  },
   userName:{
     fontSize:32,
     color: colors.heading,

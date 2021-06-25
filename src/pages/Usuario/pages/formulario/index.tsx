@@ -11,7 +11,6 @@ import {
 
 import { Feather } from "@expo/vector-icons";
 
-import logo from "../../../../assets/splash_ieq.png";
 import colors from "../../../../styles/colors";
 import fonts from "../../../../styles/fonts";
 import { useNavigation } from "@react-navigation/core";
@@ -19,27 +18,42 @@ import Input from "../../../../components/Input";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "../../../../components/Button";
-import { validationSchema } from "./validate";
+import { userSchema } from "./validate";
 import { alertError, alertSucess } from "../../../../services/util/alert";
-import { LoginInterface } from "../../interface";
-import { useLogin } from "../../hooks/useLogin";
+import { LoginInterface, StateUser, User } from "../../interface";
+import { useUser } from "../../hooks/useUser";
 import { ScrollView } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
+import { useRoute } from "@react-navigation/native";
+import { Header } from "../../../../components/Header";
 
-export function Login() {
+export function Userr() {
   const navagation = useNavigation();
-  const { error, loading, loginUser } = useLogin();
+  const router = useRoute();
+
+  const parans = router.params as StateUser;
+
+  const { action, user, error, loading, passwordDefault, saveUser } =
+    useUser(parans);
 
   const {
     register,
+    setFocus,
     setValue,
     handleSubmit,
     control,
-    setFocus,
+    reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(userSchema),
   });
+
+  useEffect(() => {
+    if (user !== null) {
+      reset(user);
+      setValue("password", passwordDefault);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (error === null) return;
@@ -48,30 +62,37 @@ export function Login() {
   }, [error]);
 
   function handleStart() {
-    // alertSucess("Logim realizado com socesoo :)!");
-    navagation.navigate("home");
-  }
-
-  function handleRegister() {
-    navagation.navigate('user')
-  }
-
-  function handleForgotPassword() {}
-
-  async function onSubmit(dados: LoginInterface) {
-    loginUser(dados);
+    alertSucess("Logim realizado com socesoo :)!");
+    // navagation.navigate('Welcome')
   }
 
   async function handleNextImput(next: string) {
-    setFocus(`${next}`)
+    setFocus(`${next}`);
   }
-  
+
+  async function onSubmit(dados: User) {
+    saveUser(dados);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.wrapper}>
-          <Image source={logo} style={styles.image} />
+        <View style={styles.header}>
+          <Text style={styles.title}>{action} usúario</Text>
+        </View>
           <View style={styles.form}>
+            <Input
+              label="Nome"
+              placeholder="Digite seu nome"
+              returnKeyType="next"
+              keyboardType="default"
+              error={errors.nome}
+              control={control}
+              name="nome"
+              onSubmitEditing={() => handleNextImput("email")}
+            />
+
             <Input
               label="E-mail"
               placeholder="Digite seu e-mail"
@@ -80,35 +101,47 @@ export function Login() {
               error={errors.email}
               control={control}
               name="email"
-              onSubmitEditing={ () => handleNextImput('password')}
+              onSubmitEditing={() => handleNextImput("password")}
             />
 
             <Input
               label="Senha"
               placeholder="Digite sua senha"
-              returnKeyType="send"
+              returnKeyType="next"
               keyboardType="visible-password"
               error={errors.password}
               control={control}
               name="password"
               type="password"
-              onSubmitEditing={handleSubmit(onSubmit)}
+              onSubmitEditing={() => handleNextImput("profile")}
             />
-            <TouchableOpacity
-              style={styles.forgotPassword}
-              onPress={handleForgotPassword}
-            >
-              <Text style={[styles.textForgotPassword]}>Esqueceu a senha?</Text>
-            </TouchableOpacity>
+
+            <Input
+              label="Perfil"
+              placeholder="Digite seu perfil"
+              returnKeyType="next"
+              keyboardType="default"
+              error={errors.profile}
+              control={control}
+              name="profile"
+              onSubmitEditing={() => handleNextImput("sector")}
+            />
+
+            <Input
+              label="Setor"
+              placeholder="Digite seu setor"
+              returnKeyType="next"
+              keyboardType="default"
+              error={errors.sector}
+              control={control}
+              name="sector"
+            />
           </View>
           <Button
             title="Confirmar"
             loading={loading}
             onPress={handleSubmit(onSubmit)}
           />
-          <TouchableOpacity style={styles.register} onPress={handleRegister}>
-            <Text style={[styles.textRegister]}>Criar nova Conta</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -118,26 +151,28 @@ export function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
-    alignContent: 'space-between',
     marginTop: getStatusBarHeight(),
+  },
+  header: {
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 24,
+    lineHeight: 32,
+    textAlign: "center",
+    color: colors.heading,
+    fontFamily: fonts.heading,
+    marginTop: 20,
   },
   wrapper: {
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    marginVertical: 40,
+    marginVertical: 0,
   },
   form: {
     marginVertical: 50,
   },
-  image: {
-    // borderColor : "#000",
-    // borderWidth:3,
-    height: Dimensions.get("window").height / 4,
-    width: "80%",
-  },
-
   button: {
     backgroundColor: colors.green,
     justifyContent: "center",
@@ -146,31 +181,5 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 56,
     width: 56,
-  },
-  register: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignContent: "center",
-    marginTop: 50
-  },
-  textRegister: {
-    fontSize: 20,
-    color: colors.textHeading,
-    fontFamily: fonts.complemet,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.text,
-  },
-  forgotPassword: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignContent: "center",
-    marginLeft: 25,
-  },
-  textForgotPassword: {
-    fontSize: 14,
-    color: colors.text,
-    fontFamily: fonts.complemet,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.text,
   },
 });
