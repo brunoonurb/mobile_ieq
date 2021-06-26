@@ -33,7 +33,7 @@ const AuthRoutes = () => {
     >
       <AppTab.Screen
         name="Home"
-        component={DrawerRouter}
+        component={Home}
         options={{
           tabBarIcon: ({ size, color, focused }) => (
             <MaterialIcons name="home" size={ focused ? size + 5 : size } color={color} />

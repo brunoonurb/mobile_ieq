@@ -3,7 +3,7 @@ import { portugues } from "../../../../services/validate/global";
 yup.setLocale(portugues);
 
 export const userSchema = yup.object().shape({
-  nome: yup.string().required("Preencha o campo de nome"),
+  name: yup.string().required("Preencha o campo de nome"),
   email: yup
     .string()
     .email("Digite um e-mail válido")

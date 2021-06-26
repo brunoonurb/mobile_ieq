@@ -28,15 +28,15 @@ export function useUser(stateUser: StateUser ) {
     }
   }
 
-  const saveUser = async (usuario: User) => {
-    return action === "Cadastrar" ? registerUser(usuario) : updateUser(usuario);
+  const saveUser = async (newUser: User) => {
+    return action === "Cadastrar" ? registerUser(newUser) : updateUser(newUser);
   };
 
-  const registerUser = async (usuario: User) => {
+  const registerUser = async (newUser: User) => {
     setLoading(true);
 
     try {
-      const { data } = await api.post("users", usuario);
+      const { data } = await api.post("users", newUser);
       setError({ statusError: false, ...data });
     } catch (error) {
       const { data } = error.response;
@@ -46,9 +46,9 @@ export function useUser(stateUser: StateUser ) {
     }
   };
 
-  const updateUser = async (usuario: User) => {
-    const { password, ...userRefined } = usuario;
-    const userFinish = password === passwordDefault ? userRefined : usuario;
+  const updateUser = async (newUser: User) => {
+    const { password, ...userRefined } = newUser;
+    const userFinish = password === passwordDefault ? userRefined : newUser;
 
     setLoading(true);
     try {

@@ -26,6 +26,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import { useRoute } from "@react-navigation/native";
 import { Header } from "../../../../components/Header";
+import InputSelect from "../../../../components/InputSelect";
 
 export function Userr() {
   const navagation = useNavigation();
@@ -58,7 +59,7 @@ export function Userr() {
   useEffect(() => {
     if (error === null) return;
     if (!error.statusError) return handleStart();
-    if (error.statusError) return alertError("Não foi possivel Logar!");
+    if (error.statusError) return alertError(error.message);
   }, [error]);
 
   function handleStart() {
@@ -73,6 +74,10 @@ export function Userr() {
   async function onSubmit(dados: User) {
     saveUser(dados);
   }
+  const pickerOptions = [
+    { value: 'diego3g', label: 'Diego Fernandes' },
+    { value: 'EliasGcf', label: 'Elias Gabriel' },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -82,14 +87,25 @@ export function Userr() {
           <Text style={styles.title}>{action} usúario</Text>
         </View>
           <View style={styles.form}>
+            <InputSelect
+              label="SELECT"
+              placeholder="Digite seu nome"
+              returnKeyType="next"
+              keyboardType="default"
+              error={errors.name}
+              control={control}
+              name="name"
+              onSubmitEditing={() => handleNextImput("email")}
+              // items={pickerOptions}
+            />
             <Input
               label="Nome"
               placeholder="Digite seu nome"
               returnKeyType="next"
               keyboardType="default"
-              error={errors.nome}
+              error={errors.name}
               control={control}
-              name="nome"
+              name="name"
               onSubmitEditing={() => handleNextImput("email")}
             />
 
