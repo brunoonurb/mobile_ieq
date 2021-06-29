@@ -27,6 +27,8 @@ import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import { useRoute } from "@react-navigation/native";
 import { Header } from "../../../../components/Header";
 import InputSelect from "../../../../components/InputSelect";
+import Ckeckbox from "../../../../components/InputCkeckbox";
+import InputCkeckbox from "../../../../components/InputCkeckbox";
 
 export function Userr() {
   const navagation = useNavigation();
@@ -75,29 +77,28 @@ export function Userr() {
     saveUser(dados);
   }
   const pickerOptions = [
-    { value: 'diego3g', label: 'Diego Fernandes' },
-    { value: 'EliasGcf', label: 'Elias Gabriel' },
+    { value: "diego3g", label: "Diego Fernandes" },
+    { value: "EliasGcf", label: "Elias Gabriel" },
   ];
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.wrapper}>
-        <View style={styles.header}>
-          <Text style={styles.title}>{action} usúario</Text>
-        </View>
+          <View style={styles.header}>
+            <Text style={styles.title}>{action} usúario</Text>
+          </View>
           <View style={styles.form}>
-            <InputSelect
-              label="SELECT"
-              placeholder="Digite seu nome"
-              returnKeyType="next"
-              keyboardType="default"
-              error={errors.name}
+
+          <InputCkeckbox
+              label="Ckeckbox"
+              placeholder="Selecione um perfil"
+              error={errors.profile}
               control={control}
-              name="name"
-              onSubmitEditing={() => handleNextImput("email")}
-              // items={pickerOptions}
+              name="profile"
+              itens={pickerOptions}
             />
+
             <Input
               label="Nome"
               placeholder="Digite seu nome"
@@ -132,15 +133,13 @@ export function Userr() {
               onSubmitEditing={() => handleNextImput("profile")}
             />
 
-            <Input
+            <InputSelect
               label="Perfil"
-              placeholder="Digite seu perfil"
-              returnKeyType="next"
-              keyboardType="default"
+              placeholder="Selecione um perfil"
               error={errors.profile}
               control={control}
               name="profile"
-              onSubmitEditing={() => handleNextImput("sector")}
+              itens={pickerOptions}
             />
 
             <Input

@@ -1,22 +1,18 @@
-import { Feather } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
 import { Controller, FieldError } from "react-hook-form";
 import {
-  KeyboardAvoidingView,
-  KeyboardTypeOptions,
-  NativeSyntheticEvent,
-  Platform,
-  ReturnKeyTypeOptions,
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputSubmitEditingEventData,
-  View,
+  CheckBox,
+  KeyboardAvoidingView, Platform, StyleSheet,
+  Text, View
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import colors from "../../styles/colors";
-import fonts from "../../styles/fonts";
+
+interface PropsItens {
+  label: string | undefined;
+  value: string | number | undefined;
+}
 
 interface Props {
   error?: FieldError;
@@ -26,7 +22,6 @@ interface Props {
   label?: string;
   color?: string;
   backgroundColor?: string;
-  defaultValue?: string;
   control?: any;
   textoAjuda?: string;
   borderRadius?: number;
@@ -36,18 +31,16 @@ interface Props {
   icon?: string;
   fontSize?: number;
   required?: boolean;
-  returnKeyType?: ReturnKeyTypeOptions;
-  keyboardType?: KeyboardTypeOptions;
   marginLeft?: number | string;
   marginRight?: number | string;
   marginTop?: number | string;
   marginBottom?: number | string;
-  onSubmitEditing?:
-    | ((e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void)
-    | undefined;
+  mode?: "dialog" | "dropdown";
+  itens: PropsItens[];
+  defaultValue?: string;
 }
 
-const InputCuston: React.FC<Props> = ({
+const InputCkeckbox: React.FC<Props> = ({
   name,
   type,
   label,
@@ -59,19 +52,18 @@ const InputCuston: React.FC<Props> = ({
   control,
   error,
   textoAjuda,
-  defaultValue,
   animationEfect,
   durationEfect,
   styleEfect,
   icon,
   required,
-  keyboardType = "default",
-  returnKeyType = "default",
   marginLeft = 5,
   marginRight = 5,
   marginTop = 8,
   marginBottom = 8,
-  onSubmitEditing,
+  mode = 'dropdown',
+  itens,
+  defaultValue,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -86,11 +78,6 @@ const InputCuston: React.FC<Props> = ({
     color: color ? color : colors.text,
     fontSize: sizeFont,
   };
-  const stylesIcon = {
-    color: color ? color : colors.text,
-    fontSize: sizeFont,
-  };
-
   const stylesBaseInput = {
     backgroundColor: backgroundColor ? backgroundColor : colors.secondaryColor,
     color: color ? color : colors.text,
@@ -118,6 +105,7 @@ const InputCuston: React.FC<Props> = ({
   function handleInputFocus() {
     setIsFocused(true);
   }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -132,46 +120,37 @@ const InputCuston: React.FC<Props> = ({
           <Text style={[styles.label, stylesLabel]}>{label}</Text>
         </View>
         <View>
-          <View style={styles.iconInput}>
+          
             <View style={styles.ViewInput}>
-              <Controller
-                control={control}
-                render={({ field: { onChange, onBlur, value, ...props } }) => (
-                  <TextInput
-                    style={[
-                      styles.input,
-                      stylesInput,
-                      isFocused && { borderColor: colors.primaryColor },
-                    ]}
-                    onBlur={handleInputBlur}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    secureTextEntry={showPassword}
-                    placeholder={placeholder}
-                    keyboardType={keyboardType}
-                    returnKeyType={returnKeyType}
-                    onFocus={handleInputFocus}
-                    onSubmitEditing={onSubmitEditing}
-                    {...props}
-                  />
-                )}
-                name={name}
-                rules={{ required: true }}
-                defaultValue={defaultValue}
-              />
-            </View>
-            <View>
-              {type === "password" && (
-                <TouchableWithoutFeedback
-                  containerStyle={styles.icon}
-                  onPress={() => handlePassword()}
-                >
-                  <Feather
-                    name={showPassword ? "eye" : "eye-off"}
-                    style={[stylesIcon]}
-                  />
-                </TouchableWithoutFeedback>
+            <View style={styles.iconInput}>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value, ...props } }) => (
+                <CheckBox
+          value={false}
+          onValueChange={(value) => onChange(value)}
+          style={[styles.checkbox]}
+        />
+                // <Picker
+                //   selectedValue={value}
+                //   style={[
+                //     styles.input,
+                //     stylesInput,
+                //     isFocused && { borderColor: colors.primaryColor },
+                //   ]}
+                //   onFocus={handleInputFocus}
+                //   onBlur={handleInputBlur}
+                //   itemStyle={stylesInput}
+                //   onValueChange={(value) => onChange(value)}
+                //   mode={mode}
+                //   {...props}
+                // >
               )}
+              name={name}
+              rules={{ required: true }}
+              defaultValue={defaultValue}
+            />
+                    <Text style={styles.labelCheckbox}>Do you like React Native?</Text>
             </View>
           </View>
         </View>
@@ -183,11 +162,21 @@ const InputCuston: React.FC<Props> = ({
   );
 };
 
-export default InputCuston;
+export default InputCkeckbox;
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  checkbox: {
+    alignSelf: "center",
+  },
+  labelCheckbox: {
+    margin: 0,
   },
   baseInput: {
     flexDirection: "column",
@@ -206,32 +195,24 @@ const styles = StyleSheet.create({
     color: colors.errorColor,
     fontSize: 12,
   },
-  icon: {
-    opacity: 0.8,
-    width: 35,
-    height: 35,
-    right: 20,
-    alignItems: "center",
-    position: "absolute",
-  },
+
   iconPass: {
     opacity: 0.7,
   },
   input: {
-    paddingVertical: 6,
     borderBottomWidth: 1,
     borderColor: colors.text,
     color: colors.text,
-    fontSize: 18,
-    paddingHorizontal: 5,
-    paddingBottom: 0,
-    fontFamily: fonts.text,
   },
-  ViewInput: {
+  ViewInput:{
     height: 30,
     width: "90%",
     marginHorizontal: "5%",
   },
+  itens:{
+    paddingVertical:50
+  },
+
   iconInput: {
     flexDirection: "row",
   },
