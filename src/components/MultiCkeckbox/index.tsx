@@ -4,12 +4,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { ScrollView } from "react-native-gesture-handler";
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
 import { PropsItem } from "./interfaces";
@@ -35,6 +35,7 @@ interface Props {
   marginRight?: number | string;
   marginTop?: number | string;
   marginBottom?: number | string;
+  widthItem?: string | number;
   mode?: "dialog" | "dropdown";
   itens: PropsItem[];
   defaultValue?: string;
@@ -60,6 +61,7 @@ const MultiCkeckbox: React.FC<Props> = ({
   marginRight = 5,
   marginTop = 8,
   marginBottom = 8,
+  widthItem,
   mode = "dropdown",
   itens,
   defaultValue,
@@ -106,7 +108,7 @@ const MultiCkeckbox: React.FC<Props> = ({
                   render={({
                     field: { onChange, onBlur, value, ...props },
                   }) => (
-                    <ItemCkeckbox itens={itens} onChange={onChange} />
+                    <ItemCkeckbox itens={itens} onChange={onChange} widthItem={widthItem} />
                   )}
                   name={name}
                   rules={{ required: true }}
@@ -149,7 +151,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   ViewInput: {
-    height: 100,
     width: "90%",
     marginHorizontal: "5%",
   },

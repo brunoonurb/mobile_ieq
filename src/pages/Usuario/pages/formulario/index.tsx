@@ -177,6 +177,7 @@ export function Userr() {
               control={control}
               name="sectorsActuated"
               itens={itensDepartamentoOperation}
+              widthItem="50%"
             />
           </View>
           <View style={styles.button}>

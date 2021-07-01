@@ -16,11 +16,16 @@ import fonts from "../../styles/fonts";
 import { PropsItem } from "./interfaces";
 
 interface PropsItens {
+  widthItem?: string | number;
   itens: PropsItem[];
   onChange: (...event: any[]) => void;
 }
 
-const ItemCkeckbox: React.FC<PropsItens> = ({ itens, onChange }) => {
+const ItemCkeckbox: React.FC<PropsItens> = ({
+  widthItem = "100%",
+  itens,
+  onChange,
+}) => {
   const [checkedItens, setCheckedItens] = useState<PropsItem[]>(itens);
 
   useEffect(() => {
@@ -38,28 +43,40 @@ const ItemCkeckbox: React.FC<PropsItens> = ({ itens, onChange }) => {
     });
     setCheckedItens(itensRefactor);
   }
-
+  const styleItem = {
+    width: widthItem,
+  };
   return (
-    <>
+    <View style={styles.container}>
       {checkedItens.map((iten, indice) => {
         return (
-          <View  key={indice} style={styles.checkboxContainer}>
-            <CheckBox
-              value={iten.checked}
-              onValueChange={(value: any) => alterItens(value, iten.label)}
-              style={[styles.checkbox]}
-            />
-            <Text style={styles.labelCheckbox}> {iten.label}</Text>
+          <View key={indice} style={[styles.item, styleItem]}>
+            <View style={styles.checkboxContainer}>
+              <CheckBox
+                value={iten.checked}
+                onValueChange={(value: any) => alterItens(value, iten.label)}
+                style={[styles.checkbox]}
+              />
+              <Text style={styles.labelCheckbox}> {iten.label}</Text>
+            </View>
           </View>
         );
       })}
-    </>
+    </View>
   );
 };
 
 export default ItemCkeckbox;
 
 const styles = StyleSheet.create({
+  container: {
+    marginTop: 5,
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start", // if you want to fill rows left to right
+  },
+  item: {},
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -69,6 +86,6 @@ const styles = StyleSheet.create({
   },
   labelCheckbox: {
     margin: 0,
-    color: colors.textHeading
+    color: colors.textHeading,
   },
 });
