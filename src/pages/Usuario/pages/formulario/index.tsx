@@ -27,8 +27,8 @@ import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import { useRoute } from "@react-navigation/native";
 import { Header } from "../../../../components/Header";
 import InputSelect from "../../../../components/InputSelect";
-import Ckeckbox from "../../../../components/InputCkeckbox";
-import InputCkeckbox from "../../../../components/InputCkeckbox";
+import InputCkeckbox from "../../../../components/MultiCkeckbox";
+import MultiCkeckbox from "../../../../components/MultiCkeckbox";
 
 export function Userr() {
   const navagation = useNavigation();
@@ -65,7 +65,7 @@ export function Userr() {
   }, [error]);
 
   function handleStart() {
-    alertSucess("Logim realizado com socesoo :)!");
+    alertSucess("Usúario cadastrado com sucesso)!");
     // navagation.navigate('Welcome')
   }
 
@@ -74,11 +74,29 @@ export function Userr() {
   }
 
   async function onSubmit(dados: User) {
+    console.log(dados);
+
     saveUser(dados);
   }
   const pickerOptions = [
-    { value: "diego3g", label: "Diego Fernandes" },
-    { value: "EliasGcf", label: "Elias Gabriel" },
+    { value: "diego3g", label: "Colaborador" },
+    { value: "EliasGcf", label: "Lider" },
+    { value: "EliasGcf", label: "Auxiliar Liderança" },
+  ];
+
+  const departamentoOptions = [
+    { value: "diego3g", label: "EDB" },
+    { value: "GMC", label: "GMC" },
+    { value: "Diaconato", label: "Diaconato" },
+    { label: "Tesouraria", value: "Tesouraria" },
+    { value: "EBD infantil", label: "EBD infantil" },
+  ];
+  const itensDepartamentoOperation = [
+    { checked: true, label: "GMC", value: "GMC" },
+    { checked: false, label: "EDB", value: "EDB" },
+    { checked: false, label: "Diaconato", value: "Diaconato" },
+    { checked: true, label: "Tesouraria", value: "Tesouraria" },
+    { checked: true, label: "EBD infantil", value: "EBD infantil" },
   ];
 
   return (
@@ -89,16 +107,6 @@ export function Userr() {
             <Text style={styles.title}>{action} usúario</Text>
           </View>
           <View style={styles.form}>
-
-          <InputCkeckbox
-              label="Ckeckbox"
-              placeholder="Selecione um perfil"
-              error={errors.profile}
-              control={control}
-              name="profile"
-              itens={pickerOptions}
-            />
-
             <Input
               label="Nome"
               placeholder="Digite seu nome"
@@ -125,16 +133,27 @@ export function Userr() {
               label="Senha"
               placeholder="Digite sua senha"
               returnKeyType="next"
-              keyboardType="visible-password"
+              keyboardType="numeric"
               error={errors.password}
               control={control}
               name="password"
               type="password"
+              onSubmitEditing={() => handleNextImput("phone")}
+            />
+
+             <Input
+              label="Telefone"
+              placeholder="Digite seu telefone"
+              returnKeyType="next"
+              keyboardType="numeric"
+              error={errors.phone}
+              control={control}
+              name="phone"
               onSubmitEditing={() => handleNextImput("profile")}
             />
 
             <InputSelect
-              label="Perfil"
+              label="Cargo"
               placeholder="Selecione um perfil"
               error={errors.profile}
               control={control}
@@ -142,21 +161,31 @@ export function Userr() {
               itens={pickerOptions}
             />
 
-            <Input
-              label="Setor"
-              placeholder="Digite seu setor"
-              returnKeyType="next"
-              keyboardType="default"
+            <InputSelect
+              label="Departamento"
+              placeholder="Selecione um departamento"
               error={errors.sector}
               control={control}
               name="sector"
+              itens={departamentoOptions}
+              mode="dialog"
+            />
+
+            <MultiCkeckbox
+              label="Departamento de atuação"
+              error={errors.sectorsActuated}
+              control={control}
+              name="sectorsActuated"
+              itens={itensDepartamentoOperation}
             />
           </View>
+          <View style={styles.button}>
           <Button
             title="Confirmar"
             loading={loading}
             onPress={handleSubmit(onSubmit)}
           />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -189,12 +218,9 @@ const styles = StyleSheet.create({
     marginVertical: 50,
   },
   button: {
-    backgroundColor: colors.green,
+    flexDirection:'row',
     justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 16,
-    marginBottom: 10,
-    height: 56,
-    width: 56,
+    width: "100%",
+    paddingBottom: 50
   },
 });

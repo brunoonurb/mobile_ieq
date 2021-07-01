@@ -1,13 +1,17 @@
+import CheckBox from "@react-native-community/checkbox";
 import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
 import { Controller, FieldError } from "react-hook-form";
 import {
-  CheckBox,
-  KeyboardAvoidingView, Platform, StyleSheet,
-  Text, View
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import colors from "../../styles/colors";
+import fonts from "../../styles/fonts";
 
 interface PropsItens {
   label: string | undefined;
@@ -35,7 +39,6 @@ interface Props {
   marginRight?: number | string;
   marginTop?: number | string;
   marginBottom?: number | string;
-  mode?: "dialog" | "dropdown";
   itens: PropsItens[];
   defaultValue?: string;
 }
@@ -61,14 +64,10 @@ const InputCkeckbox: React.FC<Props> = ({
   marginRight = 5,
   marginTop = 8,
   marginBottom = 8,
-  mode = 'dropdown',
   itens,
   defaultValue,
   ...props
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-
   const sizeFont = fontSize ? fontSize : 16;
   const stylesLabel = {
     fontSize: sizeFont + 1,
@@ -94,18 +93,6 @@ const InputCkeckbox: React.FC<Props> = ({
     marginBottom: marginBottom,
   };
 
-  function handlePassword() {
-    setShowPassword(!showPassword);
-  }
-
-  function handleInputBlur() {
-    setIsFocused(false);
-  }
-
-  function handleInputFocus() {
-    setIsFocused(true);
-  }
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -120,38 +107,29 @@ const InputCkeckbox: React.FC<Props> = ({
           <Text style={[styles.label, stylesLabel]}>{label}</Text>
         </View>
         <View>
-          
+          <View style={styles.iconInput}>
             <View style={styles.ViewInput}>
-            <View style={styles.iconInput}>
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value, ...props } }) => (
-                <CheckBox
-          value={false}
-          onValueChange={(value) => onChange(value)}
-          style={[styles.checkbox]}
-        />
-                // <Picker
-                //   selectedValue={value}
-                //   style={[
-                //     styles.input,
-                //     stylesInput,
-                //     isFocused && { borderColor: colors.primaryColor },
-                //   ]}
-                //   onFocus={handleInputFocus}
-                //   onBlur={handleInputBlur}
-                //   itemStyle={stylesInput}
-                //   onValueChange={(value) => onChange(value)}
-                //   mode={mode}
-                //   {...props}
-                // >
-              )}
-              name={name}
-              rules={{ required: true }}
-              defaultValue={defaultValue}
-            />
-                    <Text style={styles.labelCheckbox}>Do you like React Native?</Text>
+              <View style={styles.checkboxContainer}>
+                <Controller
+                  control={control}
+                  render={({
+                    field: { onChange, onBlur, value, ...props },
+                  }) => (
+                    <CheckBox
+                      value={value}
+                      onValueChange={(value) => onChange([value])}
+                      style={[styles.checkbox]}
+                      {...props}
+                    />
+                  )}
+                  name={name}
+                  rules={{ required: true }}
+                  defaultValue={false}
+                />
+                <Text style={styles.labelCheckbox}> {placeholder}</Text>
+              </View>
             </View>
+            <View></View>
           </View>
         </View>
         <View>
@@ -171,6 +149,7 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: "row",
     marginBottom: 20,
+    alignItems: "center",
   },
   checkbox: {
     alignSelf: "center",
@@ -195,24 +174,32 @@ const styles = StyleSheet.create({
     color: colors.errorColor,
     fontSize: 12,
   },
-
+  icon: {
+    opacity: 0.8,
+    width: 35,
+    height: 35,
+    right: 20,
+    alignItems: "center",
+    position: "absolute",
+  },
   iconPass: {
     opacity: 0.7,
   },
   input: {
+    paddingVertical: 6,
     borderBottomWidth: 1,
     borderColor: colors.text,
     color: colors.text,
+    fontSize: 18,
+    paddingHorizontal: 5,
+    paddingBottom: 0,
+    fontFamily: fonts.text,
   },
-  ViewInput:{
+  ViewInput: {
     height: 30,
     width: "90%",
     marginHorizontal: "5%",
   },
-  itens:{
-    paddingVertical:50
-  },
-
   iconInput: {
     flexDirection: "row",
   },

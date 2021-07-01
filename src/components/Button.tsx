@@ -12,11 +12,22 @@ import fonts from "../styles/fonts";
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   loading?:boolean;
+  marginTop?: number| string;
+  marginBotton?: number| string;
+  marginLeft?: number| string;
+  marginRight?: number| string;
 }
-export function Button({ title, loading, ...rest }: ButtonProps) {
+export function Button({ title, loading,marginTop, marginBotton, marginLeft, marginRight, ...rest }: ButtonProps) {
+  
+  const stylesContanier ={
+    marginTop, 
+    marginBotton,
+    marginLeft,
+    marginRight
+  }
   return (
     <TouchableOpacity 
-    style={styles.contanier} 
+    style={[styles.contanier,stylesContanier]} 
     activeOpacity={0.7} 
     {...rest}
     >

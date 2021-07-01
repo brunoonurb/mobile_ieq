@@ -12,6 +12,8 @@ export const userSchema = yup.object().shape({
     .string()
     .min(5, "A senha deve ter no mínimo 5 caracteres")
     .required("Preencha o campo de senha"),
+  phone: yup.string(),
   profile: yup.string().required("Preencha o campo de perfil"),
   sector: yup.string().required("Preencha o campo de setor"),
+  sectorsActuated: yup.array().required("Preencha o campo de setor"),
 });
