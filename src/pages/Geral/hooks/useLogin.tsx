@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Error } from "../../../interface/geral/error";
 import api from "../../../services/api";
 import { setToken } from "../../../services/auth";
-import { LoginInterface } from "../interface/loginInterface";
+import { LoginInterface } from "../interface";
 
 export function useLogin() {
   const [error, setError] = useState<Error | null>(null);
@@ -12,7 +12,7 @@ export function useLogin() {
 
     setLoading(true);
 
-    try {   
+    try {
       const { data } = await api.post(`/authenticate`, dados);
       setToken(data.token);
       setError({ statusError: false, ...data });

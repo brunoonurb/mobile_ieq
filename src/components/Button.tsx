@@ -16,19 +16,21 @@ interface ButtonProps extends TouchableOpacityProps {
   marginBotton?: number| string;
   marginLeft?: number| string;
   marginRight?: number| string;
+  backgroundColor?: string;
 }
-export function Button({ title, loading,marginTop, marginBotton, marginLeft, marginRight, ...rest }: ButtonProps) {
-  
+export function Button({ backgroundColor, title, loading,marginTop, marginBotton, marginLeft, marginRight, ...rest }: ButtonProps) {
+
   const stylesContanier ={
-    marginTop, 
+    backgroundColor: backgroundColor ? backgroundColor: colors.green,
+    marginTop,
     marginBotton,
     marginLeft,
     marginRight
   }
   return (
-    <TouchableOpacity 
-    style={[styles.contanier,stylesContanier]} 
-    activeOpacity={0.7} 
+    <TouchableOpacity
+    style={[styles.contanier,stylesContanier]}
+    activeOpacity={0.7}
     {...rest}
     >
      {loading &&
@@ -37,7 +39,7 @@ export function Button({ title, loading,marginTop, marginBotton, marginLeft, mar
      {!loading &&
       <Text style={styles.text}> {title} </Text>
      }
-      
+
     </TouchableOpacity>
   );
 }
