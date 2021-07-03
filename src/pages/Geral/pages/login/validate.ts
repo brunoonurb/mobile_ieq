@@ -20,3 +20,10 @@ export const validatePasswordCodeSchema = yup.object().shape({
         .required("Preencha o campo de e-mail"),
     codePassword: yup.string().required("Codigo é obrigatorio!"),
 });
+
+export const validateSendEmailSchema = yup.object().shape({
+    email: yup
+        .string()
+        .email("Digite um e-mail válido")
+        .required("Preencha o campo de e-mail"),
+});

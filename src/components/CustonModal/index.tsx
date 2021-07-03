@@ -10,11 +10,16 @@ import {
     TouchableWithoutFeedback,
     TouchableOpacity,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { Colors } from "react-native/Libraries/NewAppScreen";
+import colors from "../../styles/colors";
+import fonts from "../../styles/fonts";
 
 interface Props {
     title?: string;
     label?: string;
     color?: string;
+    fontSizeTitle?: number;
     backgroundColor?: string;
     shadowColor?: string;
     borderRadius?: number;
@@ -36,11 +41,14 @@ interface Props {
     onOrientationChange?: (...event: any[]) => void;
     onDismiss?: (...event: any[]) => void;
     visible: boolean;
+    closeButton?: boolean;
+    clickOffModalCloses?: boolean;
     setVisible: (...event: any[]) => void;
 }
 
 const CustonModal: React.FC<Props> = ({
     title,
+    fontSizeTitle,
     color,
     backgroundColor = "#fff",
     shadowColor = "#000",
@@ -59,6 +67,8 @@ const CustonModal: React.FC<Props> = ({
     onOrientationChange,
     onDismiss,
     visible,
+    closeButton = true,
+    clickOffModalCloses = true,
     setVisible,
     children,
     ...props
@@ -72,6 +82,9 @@ const CustonModal: React.FC<Props> = ({
         paddingLeft: paddingLeft,
         paddingRight: paddingRight,
     };
+    const styleTitle ={
+        fontSize : fontSizeTitle ? fontSizeTitle : 16
+    }
 
     function handleVisibleModal(visible: boolean) {
         setVisible(!visible);
@@ -85,47 +98,82 @@ const CustonModal: React.FC<Props> = ({
             animationType={animationType}
             transparent={transparent}
             visible={visible}
-            onRequestClose={() => {
-                handleVisibleModal(!visible);
-            }}
         >
-            <TouchableWithoutFeedback onPress={() => handleVisibleModal(true)}>
+            <ScrollView>
                 <View style={styles.modalContainer}>
+                    <TouchableWithoutFeedback
+                        onPress={() =>
+                            clickOffModalCloses ? handleVisibleModal(true) : ""
+                        }
+                    >
+                        <View style={styles.flexModal}></View>
+                    </TouchableWithoutFeedback>
                     <View style={styles.centeredView}>
                         <View style={[styles.modalView, styleBaseModal]}>
-                            <TouchableOpacity
-                                onPress={() => handleVisibleModal(true)}
-                                style={styles.closeModal}
-                            >
-                                <Text
-                                    style={{
-                                        color: "#000",
-                                        fontSize: 20,
-                                    }}
-                                >
-                                    x
-                                </Text>
-                            </TouchableOpacity>
+                            <View style={styles.viewCloseModal}>
+                            <Text style={[styles.title, styleTitle]}>{title}</Text>
+                                <View style={styles.closeModal}>
+
+                                    {closeButton && (
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                handleVisibleModal(true)
+                                            }
+                                        >
+                                            <View style={styles.close}>
+                                                <Text
+                                                    style={[
+                                                        {
+                                                            color: "#000",
+                                                            fontSize: 20,
+                                                            borderStyle:
+                                                                "solid",
+                                                        },
+                                                    ]}
+                                                >
+                                                    x
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+                            </View>
+
                             {children}
                         </View>
                     </View>
+                    <TouchableWithoutFeedback
+                        onPress={() =>
+                            clickOffModalCloses ? handleVisibleModal(true) : ""
+                        }
+                    >
+                        <View style={styles.flexModal}></View>
+                    </TouchableWithoutFeedback>
                 </View>
-            </TouchableWithoutFeedback>
+            </ScrollView>
         </Modal>
     );
 };
 
 const styles = StyleSheet.create({
-    centeredView: {
+    modalContainer: {
+        height: Dimensions.get("window").height,
+        backgroundColor: "rgba(0,0,0, 0.5)",
+        flexDirection: "column",
+        justifyContent: "space-between",
+    },
+    flexModal: {
         flex: 1,
+    },
+
+    centeredView: {
         justifyContent: "center",
         alignItems: "center",
-        margin: 20,
+        marginHorizontal: 20,
     },
     modalView: {
         backgroundColor: "white",
         borderRadius: 20,
-        // paddingTop: 0,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -136,14 +184,27 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 5,
     },
-
-    modalContainer: {
-        height: Dimensions.get("window").height,
-        backgroundColor: "rgba(0,0,0, 0.5)",
+    title:{
+        marginTop:5,
+        marginLeft:10,
+        color: colors.textDark,
+        fontFamily: fonts.heading,
+    },
+    viewCloseModal: {
+        marginBottom: 5,
+        flexDirection: "row",
     },
     closeModal: {
-        width: 20,
-        marginLeft: Dimensions.get("window").width / 2 + 125,
+        flex: 1,
+        marginVertical: 5,
+        alignItems: "flex-end",
+    },
+    close: {
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#fff",
+        width: 25,
+        height: 25,
     },
 });
 

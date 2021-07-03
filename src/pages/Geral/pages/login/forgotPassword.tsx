@@ -20,7 +20,7 @@ import Input from "../../../../components/Input";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "../../../../components/Button";
-import { validatePasswordCodeSchema, validationSchema } from "./validate";
+import { validatePasswordCodeSchema, validateSendEmailSchema, validationSchema } from "./validate";
 import { alertError, alertSucess } from "../../../../services/util/alert";
 import { LoginInterface, ParansForgotPassword } from "../../interface";
 import { useLogin } from "../../hooks/useLogin";
@@ -39,6 +39,8 @@ export function ForgotPassword() {
     const { dataForgotPassWord, error, loading, valideCode } =
         useForgotPassword(parans);
 
+    const [modalVisible, setModalVisible] = useState(false);
+
     const {
         reset,
         setValue,
@@ -47,7 +49,7 @@ export function ForgotPassword() {
         setFocus,
         formState: { errors },
     } = useForm({
-        resolver: yupResolver(validatePasswordCodeSchema),
+        resolver: yupResolver(validateSendEmailSchema),
     });
 
     useEffect(() => {
@@ -74,7 +76,9 @@ export function ForgotPassword() {
     }
 
     async function onSubmit(dados: ParansForgotPassword) {
+        console.log("dados");
         console.log(dados);
+        setModalVisible(false);
         return;
         valideCode(dados);
     }
@@ -82,11 +86,18 @@ export function ForgotPassword() {
     async function handleNextImput(next: string) {
         setFocus(`${next}`);
     }
-    const [modalVisible, setModalVisible] = useState(true);
+
     return (
         <SafeAreaView style={styles.container}>
-            <CustonModal visible={modalVisible} setVisible={setModalVisible}>
-                <View>
+            <CustonModal
+                visible={modalVisible}
+                setVisible={setModalVisible}
+                closeButton={false}
+                clickOffModalCloses={false}
+                title="Altera senha"
+                fontSizeTitle={24}
+            >
+                <View style={{ flexDirection: "column", marginVertical: 20 }}>
                     <Input
                         label="E-mail"
                         placeholder="Digite seu e-mail"
@@ -95,20 +106,22 @@ export function ForgotPassword() {
                         error={errors.email}
                         control={control}
                         name="email"
-                        onSubmitEditing={() => handleNextImput("password")}
+                        onSubmitEditing={() => handleSubmit(onSubmit)}
                     />
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => setModalVisible(false)}
-                    >
-                        <Text style={styles.textStyle}>Hide modalll</Text>
-                    </Pressable>
+                    <View style={{ alignItems: "center", marginVertical: 15 }}>
+                        <Button
+                            title="Enviar"
+                            loading={loading}
+                            onPress={(handleSubmit(onSubmit))}
+                            width={200}
+                        />
+                    </View>
                 </View>
             </CustonModal>
 
             <View style={styles.wrapper}>
                 <View style={styles.form}>
-                    <Input
+                    {/* <Input
                         label="E-mail"
                         placeholder="Digite seu e-mail"
                         returnKeyType="next"
@@ -117,7 +130,7 @@ export function ForgotPassword() {
                         control={control}
                         name="email"
                         onSubmitEditing={() => handleNextImput("password")}
-                    />
+                    /> */}
 
                     <Input
                         label="Codigo de validação"
