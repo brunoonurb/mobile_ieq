@@ -45,7 +45,8 @@ export function Login() {
     useEffect(() => {
         if (error === null) return;
         if (!error.statusError) return handleStart();
-        if (error.statusError) return alertError("Não foi possivel Logar!");
+        if (error.statusError) return alertError(`${error.message}`),console.log(error.message);
+        ;
     }, [error]);
 
     function handleStart() {

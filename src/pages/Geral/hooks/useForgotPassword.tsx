@@ -1,60 +1,72 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Error } from "../../../interface/geral/error";
 import api from "../../../services/api";
-import { setToken } from "../../../services/auth";
-import { ForgotPassword, ParansForgotPassword } from "../interface";
+import { DadosForgotPassword, ParansForgotPassword } from "../interface";
 
-export function useForgotPassword(stateParans: ParansForgotPassword ) {
+export function useForgotPassword(stateParans: ParansForgotPassword) {
+    const [error, setError] = useState<Error | any>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [dataForgotPassWord, setDataForgotPassWord] =
+        useState<DadosForgotPassword>({ ...stateParans });
+    const [idUser, setIdUser] = useState<String>();
+    const valideCode = async (dadosforgotPassword: DadosForgotPassword) => {
+        setLoading(true);
+        setDataForgotPassWord(dadosforgotPassword);
+        try {
+            const { data } = await api.post(
+                "validatePasswordCode",
+                dadosforgotPassword
+            );
+            setIdUser(data.user.id);
+            setError({ statusError: null, ...data });
+            return true;
+        } catch (error) {
+            const { data } = error.response;
+            setError({ statusError: null, ...data });
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const [error, setError] = useState<Error | any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [dataForgotPassWord, setDataForgotPassWord] = useState<ForgotPassword>({...stateParans});
+    const forgotPasswordSendMail = async (email: string) => {
+        setLoading(true);
 
+        try {
+            const { data } = await api.post("forgotPassword", { email });
+            setError({ statusError: null, ...data });
+            return true;
+        } catch (error) {
+            const { data } = error.response;
+            setError({ statusError: null, ...data });
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    const changePasswordUser = async (password: string) => {
+        setLoading(true);
 
-//   async function searchUser(id: string | undefined) {
-//     try {
-//       const { data } = await api.get(`users/${id}`);
-//       setUser(data);
-//     } catch (error) {
-//       setError({ statusError: true, ...error.response.data });
-//     }
-//   }
+        try {
+            const { data } = await api.put(`resetPassword/${idUser}`, {
+                password,
+            });
+            setError({ statusError: false, ...data });
+        } catch (error) {
+            const { data } = error.response;
+            setError({ statusError: true, ...data });
+        } finally {
+            setLoading(false);
+        }
+    };
 
-//   const saveUser = async (newUser: User) => {
-//     return action === "Cadastrar" ? registerUser(newUser) : updateUser(newUser);
-//   };
-
-  const valideCode = async (dadosforgotPassword: ForgotPassword) => {
-    setLoading(true);
-
-    try {
-      const { data } = await api.post("validatePasswordCode", dadosforgotPassword);
-      setError({ statusError: false, ...data });
-    } catch (error) {
-      const { data } = error.response;
-      setError({ statusError: true, ...data });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-//   const updateUser = async (newUser: User) => {
-//     const { password, ...userRefined } = newUser;
-//     const userFinish = password === passwordDefault ? userRefined : newUser;
-
-//     setLoading(true);
-//     try {
-//       const { id } = user;
-//       const { data } = await api.put(`users/${id}`, userFinish);
-//       setError({ statusError: false, ...data });
-//     } catch (error) {
-//       const { data } = error.response;
-//       setError({ statusError: true, ...data });
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-  return { dataForgotPassWord, error, loading, valideCode };
+    return {
+        dataForgotPassWord,
+        error,
+        loading,
+        valideCode,
+        forgotPasswordSendMail,
+        changePasswordUser,
+    };
 }

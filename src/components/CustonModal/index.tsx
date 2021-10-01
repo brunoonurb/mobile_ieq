@@ -82,9 +82,9 @@ const CustonModal: React.FC<Props> = ({
         paddingLeft: paddingLeft,
         paddingRight: paddingRight,
     };
-    const styleTitle ={
-        fontSize : fontSizeTitle ? fontSizeTitle : 16
-    }
+    const styleTitle = {
+        fontSize: fontSizeTitle ? fontSizeTitle : 16,
+    };
 
     function handleVisibleModal(visible: boolean) {
         setVisible(!visible);
@@ -98,6 +98,7 @@ const CustonModal: React.FC<Props> = ({
             animationType={animationType}
             transparent={transparent}
             visible={visible}
+            onRequestClose={() => handleVisibleModal(true)}
         >
             <ScrollView>
                 <View style={styles.modalContainer}>
@@ -111,9 +112,10 @@ const CustonModal: React.FC<Props> = ({
                     <View style={styles.centeredView}>
                         <View style={[styles.modalView, styleBaseModal]}>
                             <View style={styles.viewCloseModal}>
-                            <Text style={[styles.title, styleTitle]}>{title}</Text>
+                                <Text style={[styles.title, styleTitle]}>
+                                    {title}
+                                </Text>
                                 <View style={styles.closeModal}>
-
                                     {closeButton && (
                                         <TouchableOpacity
                                             onPress={() =>
@@ -184,9 +186,9 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 5,
     },
-    title:{
-        marginTop:5,
-        marginLeft:10,
+    title: {
+        marginTop: 5,
+        marginLeft: 10,
         color: colors.textDark,
         fontFamily: fonts.heading,
     },

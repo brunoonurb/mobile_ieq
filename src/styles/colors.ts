@@ -2,12 +2,13 @@ export default {
 
   primaryColor:'#5CC6BA',
   secondaryColor:'#F1F5F4',
+  disabledSecondaryColor:'#dbe5e3',
   textLight:'#FFFFFF',
   textDark:'#000000',
   background: '#E5E5E5',
-  text:'#A0A0A0',
+  text:'#474747',
   errorColor:'#FF0707',
-  textHeading:'#737070',
+  textHeading:'#3a3a3a',
 
   green: '#32B768',
   green_dark: '#2B7A4B',

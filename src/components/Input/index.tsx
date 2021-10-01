@@ -42,6 +42,7 @@ interface Props {
   marginRight?: number | string;
   marginTop?: number | string;
   marginBottom?: number | string;
+  editable?: boolean;
   onSubmitEditing?:
     | ((e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void)
     | undefined;
@@ -71,6 +72,7 @@ const InputCuston: React.FC<Props> = ({
   marginRight = 5,
   marginTop = 8,
   marginBottom = 8,
+  editable,
   onSubmitEditing,
   ...props
 }) => {
@@ -90,8 +92,9 @@ const InputCuston: React.FC<Props> = ({
     color: color ? color : colors.text,
     fontSize: sizeFont,
   };
-
+//backgroundColor: editable == false ? false: backgroundColor ? backgroundColor : colors.secondaryColor,
   const stylesBaseInput = {
+    opacity: editable == false ? 0.5: 1,
     backgroundColor: backgroundColor ? backgroundColor : colors.secondaryColor,
     color: color ? color : colors.text,
     borderRadius: borderRadius,
@@ -138,6 +141,7 @@ const InputCuston: React.FC<Props> = ({
                 control={control}
                 render={({ field: { onChange, onBlur, value, ...props } }) => (
                   <TextInput
+                  editable={editable == false ? false: true}
                     style={[
                       styles.input,
                       stylesInput,

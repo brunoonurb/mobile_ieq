@@ -1,34 +1,26 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigation } from "@react-navigation/core";
+import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
-    Image,
-    Text,
+    Dimensions,
     SafeAreaView,
     StyleSheet,
+    Text,
     TouchableOpacity,
-    Dimensions,
     View,
-    Pressable,
 } from "react-native";
-
-import { Feather } from "@expo/vector-icons";
-
-import logo from "../../../../assets/splash_ieq.png";
+import { getStatusBarHeight } from "react-native-iphone-x-helper";
+import { Button } from "../../../../components/Button";
+import CustonModal from "../../../../components/CustonModal";
+import Input from "../../../../components/Input";
+import { alertError } from "../../../../services/util/alert";
 import colors from "../../../../styles/colors";
 import fonts from "../../../../styles/fonts";
-import { useNavigation } from "@react-navigation/core";
-import Input from "../../../../components/Input";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Button } from "../../../../components/Button";
-import { validatePasswordCodeSchema, validateSendEmailSchema, validationSchema } from "./validate";
-import { alertError, alertSucess } from "../../../../services/util/alert";
-import { LoginInterface, ParansForgotPassword } from "../../interface";
-import { useLogin } from "../../hooks/useLogin";
-import { ScrollView } from "react-native-gesture-handler";
-import { getStatusBarHeight } from "react-native-iphone-x-helper";
-import { useRoute } from "@react-navigation/native";
 import { useForgotPassword } from "../../hooks/useForgotPassword";
-import CustonModal from "../../../../components/CustonModal";
+import { DadosForgotPassword, ParansForgotPassword } from "../../interface";
+import { validatePasswordCodeSchema } from "./validate";
 
 export function ForgotPassword() {
     const navagation = useNavigation();
@@ -36,20 +28,28 @@ export function ForgotPassword() {
 
     const parans = router.params as ParansForgotPassword;
 
-    const { dataForgotPassWord, error, loading, valideCode } =
-        useForgotPassword(parans);
+    const {
+        dataForgotPassWord,
+        error,
+        loading,
+        valideCode,
+        forgotPasswordSendMail,
+        changePasswordUser,
+    } = useForgotPassword(parans);
 
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(true);
+    const [changePassword, setChangePassword] = useState(false);
 
     const {
         reset,
         setValue,
+        setError,
         handleSubmit,
         control,
         setFocus,
         formState: { errors },
     } = useForm({
-        resolver: yupResolver(validateSendEmailSchema),
+        resolver: yupResolver(validatePasswordCodeSchema),
     });
 
     useEffect(() => {
@@ -58,35 +58,88 @@ export function ForgotPassword() {
 
     useEffect(() => {
         if (error === null) return;
+        if (error.statusError === null) return;
         if (!error.statusError) return handleStart();
-        if (error.statusError) return alertError("Não foi possivel!");
+        if (error.statusError) return alertError(`${error.message}`);
     }, [error]);
 
     function handleStart() {
-        // alertSucess("Logim realizado com socesoo :)!");
-        navagation.navigate("home");
-    }
-
-    function handleRegister() {
-        navagation.navigate("user");
-    }
-
-    function handleForgotPassword() {
-        setModalVisible(!modalVisible);
-    }
-
-    async function onSubmit(dados: ParansForgotPassword) {
-        console.log("dados");
-        console.log(dados);
-        setModalVisible(false);
-        return;
-        valideCode(dados);
+        navagation.navigate("login");
     }
 
     async function handleNextImput(next: string) {
         setFocus(`${next}`);
     }
 
+    async function onSubmit(dados: DadosForgotPassword) {
+        const { email } = dados;
+
+        if (email) {
+            const result = await forgotPasswordSendMail(email);
+            if (result) {
+                setModalVisible(false);
+                return;
+            }
+            alertError(`${error?.message}`);
+            return;
+        }
+
+        setError("email", {
+            type: "manual",
+            message: "Email é obrigatório",
+        });
+    }
+
+    async function onSubmitValidateCode(dados: DadosForgotPassword) {
+        const { codePassword } = dados;
+
+        if (codePassword) {
+            const result = await valideCode(dados);
+            if (result) {
+                setValue("codePassword", "");
+                reset();
+                setChangePassword(true);
+                return;
+            }
+            alertError(`${error?.message}`);
+            return;
+        }
+
+        setError("codePassword", {
+            type: "manual",
+            message: "Não foi possivel validar!",
+        });
+    }
+
+    async function onSubmitConfirmPassword(dados: DadosForgotPassword) {
+        const { password, confirmPassword } = dados;
+
+        if (!password) {
+            setError("password", {
+                type: "manual",
+                message: "Nova senha é obrigatório!",
+            });
+        }
+        if (!confirmPassword) {
+            setError("confirmPassword", {
+                type: "manual",
+                message: "Confirmar senha é obrigatório!",
+            });
+            return;
+        }
+
+        if (password && confirmPassword === password) {
+            changePasswordUser(password);
+            return;
+        }
+
+        if (confirmPassword) {
+            setError("confirmPassword", {
+                type: "manual",
+                message: "Não confere com a senha!",
+            });
+        }
+    }
     return (
         <SafeAreaView style={styles.container}>
             <CustonModal
@@ -101,7 +154,7 @@ export function ForgotPassword() {
                     <Input
                         label="E-mail"
                         placeholder="Digite seu e-mail"
-                        returnKeyType="next"
+                        returnKeyType="send"
                         keyboardType="email-address"
                         error={errors.email}
                         control={control}
@@ -112,7 +165,7 @@ export function ForgotPassword() {
                         <Button
                             title="Enviar"
                             loading={loading}
-                            onPress={(handleSubmit(onSubmit))}
+                            onPress={handleSubmit(onSubmit)}
                             width={200}
                         />
                     </View>
@@ -120,39 +173,74 @@ export function ForgotPassword() {
             </CustonModal>
 
             <View style={styles.wrapper}>
-                <View style={styles.form}>
-                    {/* <Input
-                        label="E-mail"
-                        placeholder="Digite seu e-mail"
-                        returnKeyType="next"
-                        keyboardType="email-address"
-                        error={errors.email}
-                        control={control}
-                        name="email"
-                        onSubmitEditing={() => handleNextImput("password")}
-                    /> */}
+                {changePassword === false ? (
+                    <>
+                        <View style={styles.form}>
+                            <Input
+                                label="Codigo de validação"
+                                placeholder="Digite codigo enviado no e-mail"
+                                returnKeyType="send"
+                                keyboardType="numbers-and-punctuation"
+                                error={errors.codePassword}
+                                control={control}
+                                name="codePassword"
+                                onSubmitEditing={handleSubmit(
+                                    onSubmitValidateCode
+                                )}
+                            />
 
-                    <Input
-                        label="Codigo de validação"
-                        placeholder="Digite codigo enviado no e-mail"
-                        returnKeyType="send"
-                        keyboardType="numbers-and-punctuation"
-                        error={errors.codePassword}
-                        control={control}
-                        name="codePassword"
-                        onSubmitEditing={handleSubmit(onSubmit)}
-                    />
-                </View>
-                <Button
-                    title="Enviar"
-                    loading={loading}
-                    onPress={handleSubmit(onSubmit)}
-                />
-                <Button
-                    title="Opem"
-                    loading={loading}
-                    onPress={() => setModalVisible(true)}
-                />
+                            <TouchableOpacity
+                                style={styles.forgotPassword}
+                                onPress={() => setModalVisible(!modalVisible)}
+                            >
+                                <Text style={[styles.textForgotPassword]}>
+                                    Reenviar codigo verificador
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                        <Button
+                            title="Enviar"
+                            loading={loading}
+                            onPress={handleSubmit(onSubmitValidateCode)}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <View style={[styles.form]}>
+                            <Input
+                                label="Senha"
+                                placeholder="Digite sua senha"
+                                returnKeyType="next"
+                                keyboardType="visible-password"
+                                error={errors.password}
+                                control={control}
+                                name="password"
+                                type="password"
+                                onSubmitEditing={() =>
+                                    handleNextImput("confirmPassword")
+                                }
+                            />
+                            <Input
+                                label="Confirmar Senha"
+                                placeholder="Digite sua senha"
+                                returnKeyType="send"
+                                keyboardType="visible-password"
+                                error={errors.confirmPassword}
+                                control={control}
+                                name="confirmPassword"
+                                type="password"
+                                onSubmitEditing={() =>
+                                    handleSubmit(onSubmitConfirmPassword)
+                                }
+                            />
+                        </View>
+                        <Button
+                            title="Alterar"
+                            loading={loading}
+                            onPress={handleSubmit(onSubmitConfirmPassword)}
+                        />
+                    </>
+                )}
             </View>
         </SafeAreaView>
     );

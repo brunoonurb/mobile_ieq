@@ -7,9 +7,11 @@ interface ParansForgotPassword {
     email?: string;
 }
 
-interface ForgotPassword {
+interface DadosForgotPassword {
     email?: string;
     codePassword?: string;
+    password?: string;
+    confirmPassword ?: string;
 }
 
-export { LoginInterface, ParansForgotPassword, ForgotPassword };
+export { LoginInterface, ParansForgotPassword, DadosForgotPassword };
