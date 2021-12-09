@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Error } from "../../../interface/geral/error";
 import api from "../../../services/api";
+import { setToken } from "../../../services/auth";
 import { DadosForgotPassword, ParansForgotPassword } from "../interface";
 
 export function useForgotPassword(stateParans: ParansForgotPassword) {
@@ -14,13 +15,21 @@ export function useForgotPassword(stateParans: ParansForgotPassword) {
         setDataForgotPassWord(dadosforgotPassword);
         try {
             const { data } = await api.post(
-                "validatePasswordCode",
+                "/v1/auth/validatePasswordCode",
                 dadosforgotPassword
             );
+            const result = await setToken(data.token);
+            if (!result) {
+                setError({
+                    statusError: true,
+                    status: 401,
+                    message: "Não foi possível iniciar sessão!",
+                });
+            }
             setIdUser(data.user.id);
             setError({ statusError: null, ...data });
             return true;
-        } catch (error) {
+        } catch (error: any) {
             const { data } = error.response;
             setError({ statusError: null, ...data });
             return false;
@@ -33,10 +42,10 @@ export function useForgotPassword(stateParans: ParansForgotPassword) {
         setLoading(true);
 
         try {
-            const { data } = await api.post("forgotPassword", { email });
+            const { data } = await api.post("/v1/auth/forgotPassword", { email });
             setError({ statusError: null, ...data });
             return true;
-        } catch (error) {
+        } catch (error: any) {
             const { data } = error.response;
             setError({ statusError: null, ...data });
             return false;
@@ -49,11 +58,11 @@ export function useForgotPassword(stateParans: ParansForgotPassword) {
         setLoading(true);
 
         try {
-            const { data } = await api.put(`resetPassword/${idUser}`, {
+            const { data } = await api.put(`/v1/users/${idUser}/resetPassword`, {
                 password,
             });
             setError({ statusError: false, ...data });
-        } catch (error) {
+        } catch (error: any) {
             const { data } = error.response;
             setError({ statusError: true, ...data });
         } finally {

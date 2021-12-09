@@ -23,7 +23,7 @@ export function useUser(stateUser: StateUser ) {
     try {
       const { data } = await api.get(`users/${id}`);
       setUser(data);
-    } catch (error) {
+    } catch (error: any) {
       setError({ statusError: true, ...error.response.data });
     }
   }
@@ -38,7 +38,7 @@ export function useUser(stateUser: StateUser ) {
     try {
       const { data } = await api.post("users", newUser);
       setError({ statusError: false, ...data });
-    } catch (error) {
+    } catch (error: any) {
       const { data } = error.response;
       setError({ statusError: true, ...data });
     } finally {
@@ -55,7 +55,7 @@ export function useUser(stateUser: StateUser ) {
       const { id } = user;
       const { data } = await api.put(`users/${id}`, userFinish);
       setError({ statusError: false, ...data });
-    } catch (error) {
+    } catch (error: any) {
       const { data } = error.response;
       setError({ statusError: true, ...data });
     } finally {

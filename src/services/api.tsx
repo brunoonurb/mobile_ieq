@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "./auth";
 
 const api = axios.create({
-  baseURL: "https://api-ieq-cent.herokuapp.com",
+    baseURL: "https://api-ieq-nest.herokuapp.com",
 });
 
 api.interceptors.request.use(async (config) => {

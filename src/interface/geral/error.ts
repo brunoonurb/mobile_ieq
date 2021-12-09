@@ -1,6 +1,6 @@
 export interface Error {
   statusError: boolean;
-  statusCode?: number;
+  status?: number;
   message?: string;
   error?: object;
 }

@@ -12,18 +12,18 @@ export function useLogin() {
         setLoading(true);
 
         try {
-            const { data } = await api.post(`/authenticate`, dados);
+            const { data } = await api.post(`/v1/auth/login`, dados);
             const result = await setToken(data.token);
-            if (result) {
-                setError({ statusError: false, ...data });
-            } else {
+            if (!result) {
                 setError({
                     statusError: true,
-                    statusCode: 401,
+                    status: 401,
                     message: "Não foi possível iniciar sessão!",
                 });
             }
-        } catch (err) {
+
+            setError({ statusError: false, ...data });
+        } catch (err: any) {
             const { data } = err.response;
             setError({ statusError: true, ...data });
         } finally {
