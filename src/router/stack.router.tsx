@@ -25,19 +25,22 @@ const AppRouter: React.FC = () => (
             },
         }}
     >
-        <stackRouter.Screen name="login" component={Login}
-        options={{
-            headerShown: false
-          }}
-          />
+        <stackRouter.Screen
+            name="login"
+            component={Login}
+            options={{
+                headerShown: false,
+            }}
+        />
 
-        <stackRouter.Screen name="forgotPassword"
-         component={ForgotPassword}
-         options={{
-            title: 'Alterar Senha',
-            headerShown: true,
-          }}
-         />
+        <stackRouter.Screen
+            name="forgotPassword"
+            component={ForgotPassword}
+            options={{
+                title: "Alterar Senha",
+                headerShown: true,
+            }}
+        />
 
         <stackRouter.Screen
             name="UserIdentification"
@@ -48,13 +51,22 @@ const AppRouter: React.FC = () => (
 
         <stackRouter.Screen name="PlantSelect" component={PlantSelect} />
 
-        <stackRouter.Screen name="user" component={Userr}
-        options={{
-            title: 'Cadastrar',
-            headerShown: true,
-          }}/>
+        <stackRouter.Screen
+            name="user"
+            component={Userr}
+            options={{
+                title: "Cadastrar",
+                headerShown: true,
+            }}
+        />
 
-        <stackRouter.Screen name="home" component={AuthRoutes} />
+        <stackRouter.Screen
+            name="home"
+            component={AuthRoutes}
+            options={{
+                headerShown: false,
+            }}
+        />
     </stackRouter.Navigator>
 );
 

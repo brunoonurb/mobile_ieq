@@ -15,7 +15,7 @@ import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import { Button } from "../../../../components/Button";
 import CustonModal from "../../../../components/CustonModal";
 import Input from "../../../../components/Input";
-import { alertError } from "../../../../services/util/alert";
+import { alertError, alertSucess } from "../../../../services/util/alert";
 import colors from "../../../../styles/colors";
 import fonts from "../../../../styles/fonts";
 import { useForgotPassword } from "../../hooks/useForgotPassword";
@@ -74,41 +74,40 @@ export function ForgotPassword() {
     async function onSubmit(dados: DadosForgotPassword) {
         const { email } = dados;
 
-        if (email) {
-            const result = await forgotPasswordSendMail(email);
-            if (result) {
-                setModalVisible(false);
-                return;
-            }
-            alertError(`${error?.message}`);
+        if (!email) {
+            setError("email", {
+                type: "manual",
+                message: "Email é obrigatório",
+            });
             return;
         }
 
-        setError("email", {
-            type: "manual",
-            message: "Email é obrigatório",
-        });
+        const result = await forgotPasswordSendMail(email);
+        if (!result) {
+            return;
+        }
+        setModalVisible(false);
     }
 
     async function onSubmitValidateCode(dados: DadosForgotPassword) {
-        const { codePassword } = dados;
+        const { code } = dados;
 
-        if (codePassword) {
-            const result = await valideCode(dados);
-            if (result) {
-                setValue("codePassword", "");
-                reset();
-                setChangePassword(true);
-                return;
-            }
-            alertError(`${error?.message}`);
+        if (!code) {
+            setError("code", {
+                type: "manual",
+                message: "Código é obrigatório.",
+            });
             return;
         }
 
-        setError("codePassword", {
-            type: "manual",
-            message: "Não foi possivel validar!",
-        });
+        const result = await valideCode(dados);
+        if (!result) {
+            return false;
+        }
+        setValue("code", "");
+        reset();
+        setChangePassword(true);
+        return;
     }
 
     async function onSubmitConfirmPassword(dados: DadosForgotPassword) {
@@ -181,9 +180,9 @@ export function ForgotPassword() {
                                 placeholder="Digite codigo enviado no e-mail"
                                 returnKeyType="send"
                                 keyboardType="numbers-and-punctuation"
-                                error={errors.codePassword}
+                                error={errors.code}
                                 control={control}
-                                name="codePassword"
+                                name="code"
                                 onSubmitEditing={handleSubmit(
                                     onSubmitValidateCode
                                 )}

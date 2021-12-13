@@ -26,6 +26,7 @@ import { useLogin } from "../../hooks/useLogin";
 import { ScrollView } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import { Header } from "../../../../components/Header";
+import { getUser } from "../../../../services/asyncStorage/user";
 
 export function Home() {
   const navagation = useNavigation();
@@ -47,7 +48,15 @@ export function Home() {
     if (!error.statusError) return handleStart();
     if (error.statusError) return alertError("Não foi possivel Logar!");
   }, [error]);
+useEffect(()=>{
+    async function inici(){
 
+        const user =await getUser()
+        console.log(user);
+    }
+    inici()
+
+},[])
   function handleStart() {
     // alertSucess("Logim realizado com socesoo :)!");
     navagation.navigate("MyPlants");
@@ -66,16 +75,16 @@ export function Home() {
   async function handleNextImput(next: string) {
     setFocus(`${next}`)
   }
-  
+
   return (
     <SafeAreaView style={styles.container}>
-        
+
       <Header/>
       <ScrollView>
         <View style={styles.wrapper}>
-          <Image source={logo} style={styles.image} />
+          {/* <Image source={logo} style={styles.image} /> */}
           <View style={styles.form}>
-           
+
           </View>
           <Button
             title="Confirmar"

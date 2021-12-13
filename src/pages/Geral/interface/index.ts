@@ -1,3 +1,11 @@
+interface UserLogged {
+    name: string;
+    email: string;
+    profile: string;
+    sector: string;
+    sectorsActuated: Array<string>;
+    sub: string;
+}
 interface LoginInterface {
     email?: string;
     senha?: string;
@@ -9,9 +17,9 @@ interface ParansForgotPassword {
 
 interface DadosForgotPassword {
     email?: string;
-    codePassword?: string;
+    code?: string;
     password?: string;
-    confirmPassword ?: string;
+    confirmPassword?: string;
 }
 
-export { LoginInterface, ParansForgotPassword, DadosForgotPassword };
+export { LoginInterface, ParansForgotPassword, DadosForgotPassword, UserLogged };

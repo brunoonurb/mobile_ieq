@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Error } from "../../../interface/geral/error";
 import api from "../../../services/api";
+import { setItem } from "../../../services/asyncStorage";
+import { setUser } from "../../../services/asyncStorage/user";
 import { setToken } from "../../../services/auth";
 import { LoginInterface } from "../interface";
 
@@ -14,12 +16,14 @@ export function useLogin() {
         try {
             const { data } = await api.post(`/v1/auth/login`, dados);
             const result = await setToken(data.token);
+            setUser(data.user);
             if (!result) {
                 setError({
                     statusError: true,
                     status: 401,
                     message: "Não foi possível iniciar sessão!",
                 });
+                return;
             }
 
             setError({ statusError: false, ...data });
