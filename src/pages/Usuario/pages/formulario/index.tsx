@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button } from "../../../../components/Button";
+import { Header } from "../../../../components/Header";
 import Input from "../../../../components/Input";
 import InputSelect from "../../../../components/InputSelect";
 import MultiCkeckbox from "../../../../components/MultiCkeckbox";
@@ -68,6 +69,7 @@ export function Userr() {
 
     return (
         <SafeAreaView style={styles.container}>
+             <Header/>
             <ScrollView>
                 <View style={styles.wrapper}>
                     <View style={styles.form}>

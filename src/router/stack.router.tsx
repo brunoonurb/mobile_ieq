@@ -1,18 +1,10 @@
-import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-
-import { Welcome } from "../pages/Welcome";
-import { UserIdentification } from "../pages/UserIdentification";
-import { Confirmation } from "../pages/Confirmation";
-import { PlantSelect } from "../pages/PlantSelect";
-
-import colors from "../styles/colors";
-import { PlantSave } from "../pages/PlantSave";
-import { MyPlants } from "../pages/MyPlants";
+import React from "react";
 import { Login } from "../pages/Geral/pages/login";
-import AuthRoutes from "./tab.routes";
-import { Userr } from "../pages/Usuario/pages/formulario";
 import { ForgotPassword } from "../pages/Geral/pages/login/forgotPassword";
+import { Userr } from "../pages/Usuario/pages/formulario";
+import colors from "../styles/colors";
+import TabHome from "./TabHome.routes";
 
 const stackRouter = createStackNavigator();
 
@@ -43,15 +35,6 @@ const AppRouter: React.FC = () => (
         />
 
         <stackRouter.Screen
-            name="UserIdentification"
-            component={UserIdentification}
-        />
-
-        <stackRouter.Screen name="Confirmation" component={Confirmation} />
-
-        <stackRouter.Screen name="PlantSelect" component={PlantSelect} />
-
-        <stackRouter.Screen
             name="user"
             component={Userr}
             options={{
@@ -62,7 +45,7 @@ const AppRouter: React.FC = () => (
 
         <stackRouter.Screen
             name="home"
-            component={AuthRoutes}
+            component={TabHome}
             options={{
                 headerShown: false,
             }}

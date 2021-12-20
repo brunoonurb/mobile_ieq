@@ -85,7 +85,7 @@ export function Login() {
                             control={control}
                             name="email"
                             onSubmitEditing={() => handleNextImput("password")}
-                            defaultValue="brupedroso17@gmail.com"
+                            defaultValue=""
                             />
 
                         <Input
@@ -98,7 +98,7 @@ export function Login() {
                             name="password"
                             type="password"
                             onSubmitEditing={handleSubmit(onSubmit)}
-                            defaultValue="123456"
+                            defaultValue=""
                         />
                         <TouchableOpacity
                             style={styles.forgotPassword}

@@ -14,13 +14,13 @@ const [userName, setUserName] = useState<string>()
 const navagation = useNavigation();
   useEffect(()=>{
     async function loadStorageuserName() {
-     
+
       const user = await AsyncStorage.getItem('@plantmanager:user')
-      setUserName(user || '')  
+      setUserName(user || '')
     }
 
     loadStorageuserName();
-    
+
   },[userName])
 
   function opemDraw(){
